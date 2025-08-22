@@ -34,7 +34,7 @@ enough. Also, you can configure some default database settings in `config.yml`.
 ```xml
 <dependency>
     <groupId>com.github.hteppl</groupId>
-    <artifactId>DataManager</artifactId>
+    <artifactId>sql2o-nukkit</artifactId>
     <version>2.2.0-SNAPSHOT</version>
 </dependency>
 ```
@@ -51,7 +51,7 @@ allprojects {
 
 ```groovy
 dependencies {
-    implementation 'com.github.hteppl:DataManager:2.2.0-SNAPSHOT'
+    implementation 'com.github.hteppl:sql2o-nukkit:2.2.0-SNAPSHOT'
 }
 ```
 
