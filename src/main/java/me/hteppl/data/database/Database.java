@@ -1,48 +1,44 @@
 package me.hteppl.data.database;
 
 import lombok.Getter;
-import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.mapper.reflect.BeanMapper;
-import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
+import me.hteppl.data.utils.Create;
+import org.sql2o.Connection;
+import org.sql2o.Sql2o;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.sql.DataSource;
 
 @Getter
 public abstract class Database {
 
-    private final Jdbi jdbi;
+    private final Sql2o sql2o;
 
-    public Database(Jdbi jdbi) {
-        this.jdbi = jdbi;
-        this.registerRowMappers();
-        this.registerConstructorMappers();
+    public Database(Sql2o sql2o) {
+        this.sql2o = sql2o;
     }
 
-    public Handle getHandle() {
-        return jdbi.open();
+    public Database(DataSource ds) {
+        this.sql2o = Create.createFromDataSource(ds);
     }
 
-    private void registerRowMappers() {
-        List<Class<?>> mappers = new ArrayList<>();
-        this.getRowMappers(mappers);
-        for (Class<?> aClass : mappers) {
-            jdbi.registerRowMapper(BeanMapper.factory(aClass));
+    public Connection openConnection() {
+        return this.sql2o.open();
+    }
+
+    public Connection beginTransaction() {
+        return this.sql2o.beginTransaction();
+    }
+
+    public Connection beginTransaction(int isolationLevel) {
+        return this.sql2o.beginTransaction(isolationLevel);
+    }
+
+    public void execute(String rawQuery) {
+        if (rawQuery == null || rawQuery.isEmpty()) return;
+
+        try (Connection connection = this.openConnection()) {
+            connection.createQuery(rawQuery).executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to execute query: " + rawQuery, e);
         }
-    }
-
-    private void registerConstructorMappers() {
-        List<Class<?>> mappers = new ArrayList<>();
-        this.getConstructorMappers(mappers);
-        for (Class<?> aClass : mappers) {
-            jdbi.registerRowMapper(ConstructorMapper.factory(aClass));
-        }
-    }
-
-    protected void getRowMappers(List<Class<?>> classList) {
-    }
-
-    protected void getConstructorMappers(List<Class<?>> classList) {
     }
 }

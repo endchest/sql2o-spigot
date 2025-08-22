@@ -12,6 +12,6 @@ public class DataManager extends PluginBase {
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
-        settings = new Settings(this.getConfig(), this.getDataFolder().getPath());
+        settings = new Settings(this.getConfig());
     }
 }

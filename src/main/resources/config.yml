@@ -1,15 +1,10 @@
-# sqlite directory name for anonymous databases
-# set empty, for creating database file in plugin's folder by default
-sqlite-directory: "database"
-
-# default mysql connection properties
-mysql-properties: "sslMode=DISABLED&autoReconnect=true&useUnicode=true&serverTimezone=UTC"
-
 # Hikari connection pool settings (https://github.com/brettwooldridge/HikariCP)
 hikari:
-  auto-commit: true
-  connection-timeout: 30000
-  idle-timeout: 600000
-  keepalive-time: 0
-  max-lifetime: 1800000
-  maximum-pool-size: 10
+  min-idle: 10               # Minimum number of idle connections in the pool
+  maximum-pool-size: 10      # Maximum number of connections in the pool
+  max-lifetime: 1800000      # Maximum lifetime of a connection in milliseconds (30 minutes)
+  connection-timeout: 30000  # Maximum time to wait for a connection in milliseconds (30 seconds)
+  validation-timeout: 5000   # Timeout for connection validation in milliseconds (5 seconds)
+  idle-timeout: 600000       # Maximum idle time for a connection in milliseconds (10 minutes)
+  auto-commit: true          # Should connections auto-commit by default
+  keepalive-time: 0          # Keepalive time in milliseconds (0 = disabled)
