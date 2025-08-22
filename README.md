@@ -76,7 +76,7 @@ hikari:
 
 Firstly we recommend to read:
 
-- [*Jdbi Developer Guide*](http://jdbi.org/)
+- [*sql2o Developer Guide*](https://www.sql2o.org/)
 - [*HikariCP Configuration*](https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby)
 
 Basic example of MySQLDatabase class:
