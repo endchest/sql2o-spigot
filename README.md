@@ -1,7 +1,7 @@
 # sql2o-nukkit
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![jitpack](https://jitpack.io/v/hteppl/DataManager.svg)](https://jitpack.io/#hteppl/DataManager)
+[![jitpack](https://jitpack.io/v/hteppl/sql2o-nukkit.svg)](https://jitpack.io/#hteppl/sql2o-nukkit)
 
 sql2o-nukkit is a simple library plugin for [PowerNukkitX](https://github.com/PowerNukkitX/PowerNukkitX) Minecraft
 Bedrock core, that will help you to create and
