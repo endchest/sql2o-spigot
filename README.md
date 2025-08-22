@@ -1,23 +1,23 @@
-# DataManager
+# sql2o-nukkit
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![jitpack](https://jitpack.io/v/hteppl/DataManager.svg)](https://jitpack.io/#hteppl/DataManager)
 
-DataManager is a simple library plugin for [PowerNukkitX](https://github.com/PowerNukkitX/PowerNukkitX) Minecraft
+sql2o-nukkit is a simple library plugin for [PowerNukkitX](https://github.com/PowerNukkitX/PowerNukkitX) Minecraft
 Bedrock core, that will help you to create and
 manage your SQL connections with ease.
 
 ## Build JAR File
 
 ```shell
-$ git clone https://github.com/hteppl/DataManager
-$ cd DataManager
+$ git clone https://github.com/hteppl/sql2o-nukkit
+$ cd sql2o-nukkit
 $ mvn clean package
 ```
 
 ## How to install
 
-If any plugin requires a DataManager, you just need to download and put it in `plugins` folder. Usually it will be
+If any plugin requires a sql2o-nukkit, you just need to download and put it in `plugins` folder. Usually it will be
 enough. Also, you can configure some default database settings in `config.yml`.
 
 ### Maven
