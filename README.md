@@ -60,21 +60,16 @@ dependencies {
 Default plugin `config.yml` settings.
 
 ```yaml
-# sqlite directory name for anonymous databases
-# set empty, for creating database file in plugin's folder by default
-sqlite-directory: "database"
-
-# default mysql connection properties
-mysql-properties: "useSSL=false&autoReconnect=true&useUnicode=true&serverTimezone=UTC"
-
 # Hikari connection pool settings (https://github.com/brettwooldridge/HikariCP)
 hikari:
-  auto-commit: true
-  connection-timeout: 30000
-  idle-timeout: 600000
-  keepalive-time: 0
-  max-lifetime: 1800000
-  maximum-pool-size: 10
+  min-idle: 10               # Minimum number of idle connections in the pool
+  maximum-pool-size: 10      # Maximum number of connections in the pool
+  max-lifetime: 1800000      # Maximum lifetime of a connection in milliseconds (30 minutes)
+  connection-timeout: 30000  # Maximum time to wait for a connection in milliseconds (30 seconds)
+  validation-timeout: 5000   # Timeout for connection validation in milliseconds (5 seconds)
+  idle-timeout: 600000       # Maximum idle time for a connection in milliseconds (10 minutes)
+  auto-commit: true          # Should connections auto-commit by default
+  keepalive-time: 0          # Keepalive time in milliseconds (0 = disabled)
 ```
 
 ## How to use
@@ -84,22 +79,62 @@ Firstly we recommend to read:
 - [*Jdbi Developer Guide*](http://jdbi.org/)
 - [*HikariCP Configuration*](https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby)
 
-Very basic example of MySQL database class:
+Basic example of MySQLDatabase class:
 
 ```java
 import me.hteppl.data.database.MySQLDatabase;
-import org.jdbi.v3.core.Handle;
+import org.sql2o.Connection;
 
 public class MyDatabase extends MySQLDatabase {
 
     public MyDatabase() {
-        super("host", "database", "user", "password");
+        super("localhost", "mydb", "user", "password"); // defaults to port 3306
 
-        try (Handle handle = this.getHandle()) {
-            handle.createUpdate("...")
-                    .bind("var1", "data1")
-                    .bind("var2", "data2")
-                    .execute();
+        // Example: create table and insert data safely
+        try (Connection con = this.openConnection()) {
+            // Create table
+            con.createQuery("""
+                        CREATE TABLE IF NOT EXISTS users (
+                            id SERIAL PRIMARY KEY,
+                            name VARCHAR(100) NOT NULL,
+                            email VARCHAR(100) UNIQUE NOT NULL
+                        )
+                    """).executeUpdate();
+
+            // Insert data with parameters (safe)
+            con.createQuery("INSERT INTO users (name, email) VALUES (:name, :email)")
+                    .addParameter("name", "Alice")
+                    .addParameter("email", "alice@example.com")
+                    .executeUpdate();
+        }
+    }
+}
+```
+
+Basic example of PostgreSQLDatabase class:
+
+```java
+import me.hteppl.data.database.PostgreSQLDatabase;
+import org.sql2o.Connection;
+
+public class MyPostgresDatabase extends PostgreSQLDatabase {
+
+    public MyPostgresDatabase() {
+        super("localhost", "mydb", "user", "password"); // default port 5432
+
+        try (Connection con = this.openConnection()) {
+            con.createQuery("""
+                        CREATE TABLE IF NOT EXISTS products (
+                            id SERIAL PRIMARY KEY,
+                            name VARCHAR(100),
+                            price NUMERIC(10,2)
+                        )
+                    """).executeUpdate();
+
+            con.createQuery("INSERT INTO products (name, price) VALUES (:name, :price)")
+                    .addParameter("name", "Sword")
+                    .addParameter("price", 29.99)
+                    .executeUpdate();
         }
     }
 }
@@ -109,42 +144,53 @@ Example of SQLite database class:
 
 ```java
 import me.hteppl.data.database.SQLiteDatabase;
-import org.jdbi.v3.core.Handle;
+import org.sql2o.Connection;
 
-public class MyDatabase extends SQLiteDatabase {
+public class MySQLiteDatabase extends SQLiteDatabase {
 
-    public MyDatabase() {
-        super("database");
+    public MySQLiteDatabase() {
+        super("data/mydb"); // folder + filename
 
-        try (Handle handle = this.getHandle()) {
-            handle.createUpdate("...")
-                    .bind("var1", "data1")
-                    .bind("var2", "data2")
-                    .execute();
+        try (Connection con = this.openConnection()) {
+            con.createQuery("""
+                        CREATE TABLE IF NOT EXISTS items (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            name TEXT NOT NULL,
+                            quantity INTEGER NOT NULL
+                        )
+                    """).executeUpdate();
+
+            con.createQuery("INSERT INTO items (name, quantity) VALUES (:name, :quantity)")
+                    .addParameter("name", "Diamond")
+                    .addParameter("quantity", 5)
+                    .executeUpdate();
         }
     }
 }
 ```
 
-After that, you can easily do what you want with your [*Jdbi*](http://jdbi.org/) handles:
+Using transactions:
 
 ```java
-/* import your database class */
+try (Connection tx = database.beginTransaction()) {
+    tx.createQuery("INSERT INTO users (name, email) VALUES (:name, :email)")
+      .addParameter("name", "Bob")
+      .addParameter("email", "bob@example.com")
+      .executeUpdate();
 
-public class Main {
+    tx.createQuery("UPDATE users SET email = :email WHERE name = :name")
+      .addParameter("name", "Alice")
+      .addParameter("email", "alice_new@example.com")
+      .executeUpdate();
 
-    public static void main(String[] args) {
-        MyDatabase database = new MyDatabase();
-
-        try (Handle handle = database.getHandle()) {
-            handle.createUpdate("...")
-                    .bind("var1", "data1")
-                    .bind("var2", "data2")
-                    .execute();
-        }
-    }
+    tx.commit(); // commit transaction
 }
 ```
+
+- Always use parameter binding (:param) to avoid SQL injection.
+- Prefer try-with-resources so connections are closed automatically.
+- Transactions can be used with beginTransaction() to group multiple queries.
+- Hikari settings are configured via YAML (config.yml) and applied automatically via your Database classes.
 
 ## Libraries
 
@@ -154,8 +200,7 @@ developed and maintained by PowerNukkitX.
 [**MariaDB Connector**](https://github.com/mariadb-corporation/mariadb-connector-j) MariaDB Connector/J is a Type 4 JDBC
 driver. It was developed specifically as a lightweight JDBC connector for use with MariaDB and MySQL database servers.
 
-[**Jdbi**](https://github.com/jdbi/jdbi) The Jdbi library provides convenient, idiomatic access to relational databases
-in Java.
+[**sql2o**](https://github.com/aaberg/sql2o) A lightweight Java library for working with SQL databases. Provides clean, minimalistic ORM-style mapping between database rows and Java objects.
 
 [**HikariCP**](https://github.com/brettwooldridge/HikariCP) is a "zero-overhead" production ready JDBC connection pool.
 At roughly 130Kb, the library is very light.
