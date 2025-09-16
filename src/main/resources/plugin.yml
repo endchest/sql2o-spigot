@@ -1,9 +1,7 @@
-name: sql2o-nukkit
-main: me.hteppl.data.DataManager
+name: sql2o-spigot
+main: me.seetch.data.DataManager
 version: "${pom.version}"
-api: 1.0.13
+api-version: '1.21'
 load: STARTUP
 authors:
-  - "https://github.com/hteppl"
-  - "https://github.com/IWareQ"
-website: "https://github.com/hteppl/sql2o-nukkit"
+  - "https://github.com/seetch"

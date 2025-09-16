@@ -1,57 +1,51 @@
-# sql2o-nukkit
+# sql2o-spigot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![jitpack](https://jitpack.io/v/hteppl/sql2o-nukkit.svg)](https://jitpack.io/#hteppl/sql2o-nukkit)
 
-sql2o-nukkit is a simple library plugin for [PowerNukkitX](https://github.com/PowerNukkitX/PowerNukkitX) Minecraft
-Bedrock core, that will help you to create and
-manage your SQL connections with ease.
+sql2o-spigot is a simple library plugin for Spigot, that will help you to create and manage your SQL connections with ease. Ported from [**sql2o-nukkit**](https://github.com/hteppl/sql2o-nukkit).
 
 ## Build JAR File
 
 ```shell
-$ git clone https://github.com/hteppl/sql2o-nukkit
-$ cd sql2o-nukkit
+$ git clone https://github.com/endchest/sql2o-spigot
+$ cd sql2o-spigot
 $ mvn clean package
 ```
 
 ## How to install
 
-If any plugin requires a sql2o-nukkit, you just need to download and put it in `plugins` folder. Usually it will be
+If any plugin requires a sql2o-spigot, you just need to download and put it in `plugins` folder. Usually it will be
 enough. Also, you can configure some default database settings in `config.yml`.
 
 ### Maven
 
 ```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
+<repository>
+    <id>endchest-releases</id>
+    <url>https://repo.endchest.ru/releases</url>
+</repository>
 ```
 
 ```xml
 <dependency>
-    <groupId>com.github.hteppl</groupId>
-    <artifactId>sql2o-nukkit</artifactId>
-    <version>2.3.0-SNAPSHOT</version>
+    <groupId>me.seetch</groupId>
+    <artifactId>sql2o-spigot</artifactId>
+    <version>1.0.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-allprojects {
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
+maven {
+    name "endchestReleases"
+    url "https://repo.endchest.ru/releases"
 }
 ```
 
 ```groovy
 dependencies {
-    implementation 'com.github.hteppl:sql2o-nukkit:2.3.0-SNAPSHOT'
+    implementation "me.seetch:sql2o-spigot:1.0.0"
 }
 ```
 
@@ -82,7 +76,7 @@ Firstly we recommend to read:
 Basic example of MySQLDatabase class:
 
 ```java
-import me.hteppl.data.database.MySQLDatabase;
+import me.seetch.data.database.MySQLDatabase;
 import org.sql2o.Connection;
 
 public class MyDatabase extends MySQLDatabase {
@@ -114,7 +108,7 @@ public class MyDatabase extends MySQLDatabase {
 Basic example of PostgreSQLDatabase class:
 
 ```java
-import me.hteppl.data.database.PostgreSQLDatabase;
+import me.seetch.data.database.PostgreSQLDatabase;
 import org.sql2o.Connection;
 
 public class MyPostgresDatabase extends PostgreSQLDatabase {
@@ -143,7 +137,7 @@ public class MyPostgresDatabase extends PostgreSQLDatabase {
 Example of SQLite database class:
 
 ```java
-import me.hteppl.data.database.SQLiteDatabase;
+import me.seetch.data.database.SQLiteDatabase;
 import org.sql2o.Connection;
 
 public class MySQLiteDatabase extends SQLiteDatabase {
@@ -194,8 +188,7 @@ try (Connection tx = database.beginTransaction()) {
 
 ## Libraries
 
-[**PowerNukkitX**](https://github.com/PowerNukkitX/PowerNukkitX) is a branch version based on PowerNukkit,
-developed and maintained by PowerNukkitX.
+[**sql2o-nukkit**](https://github.com/hteppl/sql2o-nukkit).
 
 [**MariaDB Connector**](https://github.com/mariadb-corporation/mariadb-connector-j) MariaDB Connector/J is a Type 4 JDBC
 driver. It was developed specifically as a lightweight JDBC connector for use with MariaDB and MySQL database servers.
